@@ -1,16 +1,21 @@
 {
-  "extends": "expo/tsconfig.base",
+  "extends": "expo/tsconfig.base.json",
   "compilerOptions": {
+    "typeRoots": ["./src/types", "./node_modules/@types"],
     "strict": true,
+
+    "jsx": "react-jsx",
+    "jsxImportSource": "nativewind",
+
+    "module": "esnext",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
+      "@/*": ["./src/*"]
+    },
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     "nativewind-env.d.ts"
-  ]
+, "app.config.js"  ]
 }
