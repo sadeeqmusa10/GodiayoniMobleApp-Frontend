@@ -9,17 +9,17 @@ import {
   UseMutationOptions,
 } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
-import Constants from "expo-constants";
 
 import {
-  Delivery,
+  PickUpDelivery,
   DeliveryStatus,
   Order,
   OrderStatus,
   Restaurant,
+  User,
 } from "@/types";
-
-const API_BASE_URL = Constants.expoConfig?.extra?.API_BASE_URL;
+import { API_BASE_URL } from "@/config/apibase";
+import React from "react";
 
 // =======================
 // AUTH TOKEN HELPER
@@ -56,7 +56,7 @@ export type Admin = {
 // =======================
 
 // Get Admin Profile
-export const useGetAdmin = () => {
+export const useGetmyAdmin = () => {
   const options: UseQueryOptions<Admin, Error> = {
     queryKey: ["admin"],
     queryFn: async () => {
@@ -75,6 +75,47 @@ export const useGetAdmin = () => {
   };
 
   return useQuery(options);
+};
+
+
+const useGetAdmin = () => {
+  const getMyUserRequest = async (): Promise<User | null> => {
+    const currentUser = getAuth().currentUser;
+    if (!currentUser) throw new Error("User not authenticated!");
+
+    const userRef = doc(db, "admin", currentUser.uid);
+    const userSnap = await getDoc(userRef);
+    if (!userSnap.exists()) throw new Error("User not found in Firestore!");
+
+    return userSnap.data() as User;
+  };
+
+  const {
+    data: currentUser,
+    error,
+    isPending,
+    isError,
+    isSuccess,
+  } = useQuery({
+    queryKey: ["fetchCurrentUserFirestore"],
+    queryFn: getMyUserRequest,
+    enabled: !!getAuth().currentUser,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  // 🔔 Toast notifications handled via useEffect
+  React.useEffect(() => {
+    if (isError && error instanceof Error) {
+      Toast.show({
+        type: "error",
+        text1: error.message.includes("403")
+          ? "Your account has been disabled. Please contact support."
+          : `Error: ${error.message}`,
+      });
+    }
+  }, [isError, error]);
+
+  return { currentUser, isPending, isError, isSuccess };
 };
 
 // Get Admin Restaurant
@@ -151,7 +192,7 @@ export const useGetAllAdminOrders = (restaurantId?: string) => {
 
 // Get All Deliveries
 export const useGetAllDeliveries = () => {
-  const options: UseQueryOptions<Delivery[], Error> = {
+  const options: UseQueryOptions<PickUpDelivery[], Error> = {
     queryKey: ["deliveries"],
     queryFn: async () => {
       const token = await getFirebaseToken();

@@ -13,14 +13,17 @@ const ProtectedLayout = ({ children }: Props) => {
   const { isAuthenticated, loading } = useAuth();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
+ useEffect(() => {
+  if (!loading && !isAuthenticated) {
+    setTimeout(() => {
       navigation.reset({
         index: 0,
         routes: [{ name: "LoginScreen" }],
       });
-    }
-  }, [isAuthenticated, loading]);
+    }, 0);
+  }
+}, [isAuthenticated, loading]);
+
 
   if (loading) {
     return (

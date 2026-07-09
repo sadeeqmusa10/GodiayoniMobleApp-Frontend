@@ -48,7 +48,7 @@ const OrderItemCard = ({ order }: Props) => {
           <Text className="font-semibold">Customer:</Text> {order.deliveryDetails.name}
         </Text>
         <Text className="text-gray-700">
-          <Text className="font-semibold">Address:</Text> {order.deliveryDetails.addressLine1}, {order.deliveryDetails.city}
+          <Text className="font-semibold">Address:</Text> {order.deliveryDetails.addressLine1.text}, {order.deliveryDetails.city}
         </Text>
         <Text className="text-gray-700">
           <Text className="font-semibold">Time:</Text> {getEstimatedTime()}

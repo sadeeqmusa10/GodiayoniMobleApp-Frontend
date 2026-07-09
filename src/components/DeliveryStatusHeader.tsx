@@ -8,20 +8,26 @@ type Props = {
 };
 
 const DeliveryStatusHeader = ({ delivery }: Props) => {
-  const getExpectedDelivery = () => {
-    const createdDate =
-      "toDate" in delivery.createdAt
-        ? delivery.createdAt.toDate()
-        : new Date(delivery.createdAt._seconds * 1000);
+  const parseCreatedAt = (): Date => {
+    return new Date(delivery.createdAt._seconds * 1000);
+  };
 
-    createdDate.setMinutes(
-      createdDate.getMinutes() + delivery.estimatedDeliveryTime
+  const getExpectedDelivery = () => {
+    const createdDate = parseCreatedAt();
+
+    const expected = new Date(createdDate);
+    expected.setMinutes(
+      expected.getMinutes() + delivery.estimatedDeliveryTime
     );
 
-    return createdDate.toLocaleTimeString([], {
+    return expected.toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  const getCreatedDate = () => {
+    return parseCreatedAt().toLocaleDateString();
   };
 
   const getDeliveryStatusInfo = () => {
@@ -35,17 +41,10 @@ const DeliveryStatusHeader = ({ delivery }: Props) => {
 
   return (
     <View className="w-full mb-4">
-      {/* Header text */}
       <Text className="text-2xl font-bold tracking-tight mb-3">
-        Expected by: {getExpectedDelivery()}{" "}
-        {new Date(
-          "toDate" in delivery.createdAt
-            ? delivery.createdAt.toDate()
-            : delivery.createdAt._seconds * 1000
-        ).toLocaleDateString()}
+        Expected by: {getExpectedDelivery()} {getCreatedDate()}
       </Text>
 
-      {/* Progress Bar */}
       <View className="h-3 w-full bg-gray-300 rounded-full overflow-hidden">
         <View
           className="h-full bg-green-500 rounded-full"
@@ -55,5 +54,6 @@ const DeliveryStatusHeader = ({ delivery }: Props) => {
     </View>
   );
 };
+
 
 export default DeliveryStatusHeader;

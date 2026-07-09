@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { View, Text, ScrollView } from "react-native";
-import { useRoute, RouteProp } from "@react-navigation/native";
+import { View, Text, ScrollView, ActivityIndicator } from "react-native";
+import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import { useSearchRestaurant } from "../Api/RestaurantApi";
 import CuisineFilter from "../components/CuisineFilter";
 import PaginationSelector from "../components/PaginationSelector";
@@ -18,6 +18,7 @@ export type SearchState = {
 };
 
 const SearchScreen = () => {
+  const navigation = useNavigation<any>();
   const route = useRoute<RouteProp<RootStackParamList, "SearchScreen">>();
   const city = route.params?.city ?? "";
 
@@ -42,26 +43,25 @@ const SearchScreen = () => {
     );
   }
 
-  if (isLoading || !results) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <Text className="text-lg">Loading...</Text>
-      </View>
-    );
-  }
+   if (isLoading || !results) {
+        return (
+          <View className="flex-1 items-center justify-center bg-gray-50">
+            <ActivityIndicator size="large" color="#f97316" />
+            <Text className="mt-4 text-gray-600">Loading...</Text>
+          </View>
+        );
+      }
 
   return (
     <ScrollView className="flex-1 bg-gray-50 p-4">
       <SearchBar
         searchQuery={searchState.searchQuery}
-        placeholder="Search cuisines or restaurant name"
-        onSubmit={(data: SearchForm) =>
-          setSearchState((prev) => ({
-            ...prev,
-            searchQuery: data.searchQuery,
-            page: 1,
-          }))
-        }
+  placeholder="Search for favourite"
+  onSubmit={(data: SearchForm) =>
+    navigation.navigate("SearchScreen", {
+     city: data.searchQuery,
+    })
+  }
         onReset={() =>
           setSearchState((prev) => ({
             ...prev,

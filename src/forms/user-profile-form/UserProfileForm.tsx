@@ -9,6 +9,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import AddressInput from "@/components/GoogleAddressInput";
 
 /* ------------------ SCHEMA ------------------ */
 
@@ -16,14 +17,18 @@ const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   phone: z.string().min(10, "Invalid phone number"),
-  addressLine1: z.string().min(3, "Address is required"),
+  addressLine1: z.object({
+    text: z.string().min(5, "Please select an address"),
+    lat: z.number(),
+    lng: z.number(),
+  }),
   city: z.string().min(2, "City is required"),
   country: z.string().min(2, "Country is required"),
 });
 
 export type UserFormData = z.infer<typeof profileSchema>;
 
-/* ------------------ FORM FIELD HELPER ------------------ */
+/* ------------------ FORM FIELD ------------------ */
 
 type FormFieldProps = {
   control: any;
@@ -41,34 +46,34 @@ const FormField = ({
   placeholder,
   keyboardType = "default",
   editable = true,
-}: FormFieldProps) => {
-  return (
-    <Controller
-      control={control}
-      name={name}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <View className="mb-4">
-          <Text className="text-gray-600 mb-1">{label}</Text>
+}: FormFieldProps) => (
+  <Controller
+    control={control}
+    name={name}
+    render={({ field: { onChange, value }, fieldState: { error } }) => (
+      <View className="mb-4">
+        <Text className="text-gray-600 mb-1">{label}</Text>
 
-          <TextInput
-            className="border border-gray-300 rounded-xl p-3 text-gray-800"
-            placeholder={placeholder}
-            value={value}
-            editable={editable}
-            keyboardType={keyboardType}
-            onChangeText={onChange}
-          />
+        <TextInput
+          className={`border rounded-xl p-3 ${
+            editable ? "border-gray-300" : "border-gray-200 bg-gray-100"
+          }`}
+          placeholder={placeholder}
+          value={value}
+          editable={editable}
+          keyboardType={keyboardType}
+          onChangeText={onChange}
+        />
 
-          {error && (
-            <Text className="text-red-500 text-sm mt-1">
-              {error.message}
-            </Text>
-          )}
-        </View>
-      )}
-    />
-  );
-};
+        {error && (
+          <Text className="text-red-500 text-sm mt-1">
+            {error.message}
+          </Text>
+        )}
+      </View>
+    )}
+  />
+);
 
 /* ------------------ MAIN FORM ------------------ */
 
@@ -84,8 +89,8 @@ const UserProfileForm = ({
   currentUser,
   onSave,
   isLoading,
-  title = "Confirm Delivery Details",
-  buttonText = "Proceed to Payment",
+  title = "User Profile",
+  buttonText = "Update Profile",
 }: Props) => {
   const { control, handleSubmit, reset } = useForm<UserFormData>({
     resolver: zodResolver(profileSchema),
@@ -93,7 +98,7 @@ const UserProfileForm = ({
       name: "",
       email: "",
       phone: "",
-      addressLine1: "",
+      addressLine1: { text: "", lat: 0, lng: 0 },
       city: "",
       country: "",
     },
@@ -105,7 +110,8 @@ const UserProfileForm = ({
         name: currentUser.name ?? "",
         email: currentUser.email ?? "",
         phone: currentUser.phone ?? "",
-        addressLine1: currentUser.addressLine1 ?? "",
+        addressLine1:
+          currentUser.addressLine1 ?? { text: "", lat: 0, lng: 0 },
         city: currentUser.city ?? "",
         country: currentUser.country ?? "",
       });
@@ -114,8 +120,7 @@ const UserProfileForm = ({
 
   return (
     <ScrollView className="flex-1 bg-white rounded-2xl p-5">
-      {/* TITLE */}
-      <Text className="text-2xl font-bold text-center text-gray-800 mb-6">
+      <Text className="text-2xl font-bold text-center mb-6">
         {title}
       </Text>
 
@@ -126,13 +131,14 @@ const UserProfileForm = ({
         placeholder="Enter your name"
       />
 
+      {/* EMAIL – READ ONLY */}
       <FormField
         control={control}
         name="email"
         label="Email"
-        placeholder="Enter your email"
+        placeholder="Email"
         keyboardType="email-address"
-        
+        editable={false}
       />
 
       <FormField
@@ -143,11 +149,39 @@ const UserProfileForm = ({
         keyboardType="phone-pad"
       />
 
-      <FormField
+      {/* ADDRESS */}
+      <Controller
         control={control}
         name="addressLine1"
-        label="Address"
-        placeholder="Enter your address"
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
+          <View className="mb-4">
+            <Text className="text-gray-600 mb-1">Address</Text>
+
+            <AddressInput
+              placeholder="Enter delivery address"
+              value={value.text}
+              onChangeText={(text) =>
+                onChange({
+                  ...value,
+                  text,
+                })
+              }
+              onSelect={(addr) =>
+                onChange({
+                  text: addr.text,
+                  lat: addr.lat,
+                  lng: addr.lng,
+                })
+              }
+            />
+
+            {error && (
+              <Text className="text-red-500 text-sm mt-1">
+                {error.message}
+              </Text>
+            )}
+          </View>
+        )}
       />
 
       <FormField

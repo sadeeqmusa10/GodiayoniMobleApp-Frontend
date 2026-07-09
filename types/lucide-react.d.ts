@@ -17,3 +17,30 @@ declare module "lucide-react-native" {
   export const icons: Record<string, Icon>;
 }
 declare module "lucide-react-native/dist/esm/icons/*";
+
+declare global {
+  interface Window {
+    OkHi: {
+      selectLocation: (options: {
+        clientKey: string;
+        branchId: string;
+        user: { phone: string };
+      }) => Promise<{
+        status: "success" | "error";
+        location?: {
+          id: string;
+        };
+      }>;
+    };
+  }
+}
+
+declare module "firebase/auth/react-native" {
+  import { Persistence } from "firebase/auth";
+  import AsyncStorage from "@react-native-async-storage/async-storage";
+
+  export function getReactNativePersistence(
+    storage: typeof AsyncStorage
+  ): Persistence;
+}
+

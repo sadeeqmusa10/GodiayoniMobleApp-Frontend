@@ -1,17 +1,22 @@
 import { View, Text, Pressable } from "react-native";
 import { getAuth, signOut } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
-import { useAuth } from "../Auth/FirebaseProviderWithNavigate"; // ✅ assuming you’ll reuse this hook
+import { useAuth } from "../Auth/FirebaseProviderWithNavigate";
 
 const MobileNavLinks = () => {
-  const { user, role } = useAuth();
-  const navigation = useNavigation();
+  const { user, role, loading } = useAuth();
+  const navigation = useNavigation<any>();
   const auth = getAuth();
+
+  if (loading) return null;
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      navigation.navigate("Home" as never);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Home" }],
+      });
     } catch (error) {
       console.log("Logout failed:", error);
     }
@@ -19,7 +24,7 @@ const MobileNavLinks = () => {
 
   const NavButton = ({ label, screen }: { label: string; screen: string }) => (
     <Pressable
-      onPress={() => navigation.navigate(screen as never)}
+      onPress={() => navigation.navigate(screen)}
       className="w-full bg-white rounded-md py-3 px-4 mb-2"
     >
       <Text className="text-black font-bold text-center">{label}</Text>
@@ -30,7 +35,7 @@ const MobileNavLinks = () => {
     <View className="space-y-3">
       {user ? (
         <>
-          {/* Admin-only navigation */}
+          {/* 🔐 ADMIN ONLY */}
           {role === "admin" && (
             <>
               <NavButton label="Manage Restaurant" screen="ManageRestaurant" />
@@ -38,7 +43,7 @@ const MobileNavLinks = () => {
             </>
           )}
 
-          {/* User-only navigation */}
+          {/* 👤 USER ONLY */}
           {role === "user" && (
             <>
               <NavButton label="User Profile" screen="UserProfile" />
@@ -48,24 +53,28 @@ const MobileNavLinks = () => {
             </>
           )}
 
-          {/* Logout */}
+          {/* 🚪 LOGOUT */}
           <Pressable
             onPress={handleLogout}
             className="w-full bg-red-600 rounded-md py-3 px-4"
           >
-            <Text className="text-white font-bold text-center">Log Out</Text>
+            <Text className="text-white font-bold text-center">
+              Log Out
+            </Text>
           </Pressable>
         </>
       ) : (
-        <View className="flex flex-col space-y-2">
+        <>
           <NavButton label="Log In" screen="Login" />
           <Pressable
-            onPress={() => navigation.navigate("Signup" as never)}
+            onPress={() => navigation.navigate("Signup")}
             className="w-full bg-orange-600 rounded-md py-3 px-4"
           >
-            <Text className="text-white font-bold text-center">Sign Up</Text>
+            <Text className="text-white font-bold text-center">
+              Sign Up
+            </Text>
           </Pressable>
-        </View>
+        </>
       )}
     </View>
   );

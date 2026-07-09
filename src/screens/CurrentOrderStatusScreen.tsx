@@ -11,7 +11,7 @@ type RouteParams = {
   };
 };
 
-const OrderStatusScreen = () => {
+const CurrentOrderStatusScreen = () => {
   const route = useRoute<RouteProp<RouteParams, "OrderStatusScreen">>();
   const orderId = route.params?.orderId;
 
@@ -83,4 +83,4 @@ const OrderStatusScreen = () => {
   );
 };
 
-export default OrderStatusScreen;
+export default CurrentOrderStatusScreen;

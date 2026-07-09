@@ -6,59 +6,74 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
-  Platform,
-  Linking,
   Modal,
 } from "react-native";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { useGetRestaurant } from "../Api/RestaurantApi";
-import { useCreateCheckoutSession } from "../Api/OrderApi";
 import RestaurantInfo from "../components/RestaurantInfo";
 import MenuItem from "../components/MenuItem";
 import OrderSummary from "@/components/OrderSummary";
-import UserProfileForm from "../forms/user-profile-form/UserProfileForm";
-import type { UserFormData } from "../forms/user-profile-form/UserProfileForm";
+import UserProfileForm, {
+  UserFormData,
+} from "../forms/user-profile-form/UserProfileForm";
 import { RootStackParamList } from "../types";
+import OrderDetailsForm, { OrderDetailsData } from "@/forms/order-details-form/OrderDetailsForm";
+import SearchBar from "@/components/SearchBar";
 
-import InAppBrowser from "react-native-inappbrowser-reborn";
+/* =====================
+   TYPES
+===================== */
 
 export type CartItem = {
   id: string;
   name: string;
   price: number;
   quantity: number;
+  imageUrl: string;
 };
 
-type DetailRouteProp = RouteProp<RootStackParamList, "DetailScreen">;
-type DetailNavProp = NativeStackNavigationProp<
+type DetailRouteProp = RouteProp<
   RootStackParamList,
   "DetailScreen"
 >;
 
+type NavigationProp = NativeStackNavigationProp<
+  RootStackParamList
+>;
+
+/* =====================
+   COMPONENT
+===================== */
+
 const DetailScreen = () => {
-  const navigation = useNavigation<DetailNavProp>();
   const route = useRoute<DetailRouteProp>();
+  const navigation = useNavigation<NavigationProp>();
   const { firebaseId } = route.params;
 
-  const { restaurant, isLoading } = useGetRestaurant(firebaseId);
-  const { createCheckoutSession, isPending: isCheckoutLoading } =
-    useCreateCheckoutSession();
+  const { restaurant, isLoading } =
+    useGetRestaurant(firebaseId);
 
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [showCheckoutForm, setShowCheckoutForm] = useState(false);
+  const [cartItems, setCartItems] =
+    useState<CartItem[]>([]);
+  const [showCheckoutForm, setShowCheckoutForm] =
+    useState(false);
+
+    const [menuSearch, setMenuSearch] = useState("");
 
   /* =====================
-     LOAD CART (WEB SAFE)
+     LOAD CART
   ====================== */
+
   useEffect(() => {
     if (!firebaseId) return;
+
     try {
-      const stored = globalThis?.localStorage?.getItem(
-        `cartItems-${firebaseId}`
-      );
+      const stored =
+        globalThis?.localStorage?.getItem(
+          `cartItems-${firebaseId}`
+        );
       if (stored) setCartItems(JSON.parse(stored));
     } catch {}
   }, [firebaseId]);
@@ -72,13 +87,21 @@ const DetailScreen = () => {
     } catch {}
   };
 
+  /* =====================
+     CART HANDLERS
+  ====================== */
+
   const addToCart = (menuItem: {
     id: string;
     name: string;
     price: number;
+    imageUrl: string;
   }) => {
     setCartItems((prev) => {
-      const existing = prev.find((i) => i.id === menuItem.id);
+      const existing = prev.find(
+        (i) => i.id === menuItem.id
+      );
+
       const updated = existing
         ? prev.map((i) =>
             i.id === menuItem.id
@@ -86,108 +109,108 @@ const DetailScreen = () => {
               : i
           )
         : [...prev, { ...menuItem, quantity: 1 }];
+
       persistCart(updated);
       return updated;
     });
   };
 
   const removeFromCart = (item: CartItem) => {
-    const updated = cartItems.filter((i) => i.id !== item.id);
+    const updated = cartItems.filter(
+      (i) => i.id !== item.id
+    );
     setCartItems(updated);
     persistCart(updated);
   };
 
   /* =====================
-     CHECKOUT HANDLER
+     FORM SUBMIT
   ====================== */
- const onCheckout = async (formData: UserFormData) => {
-  if (!restaurant || !firebaseId) return;
 
-  const payload = {
-    restaurantId: restaurant.restaurantId,
-    cartItems: cartItems.map((i) => ({
-      menuItemId: i.id,
-      name: i.name,
-      quantity: i.quantity.toString(),
-    })),
-    deliveryDetails: {
-      ...formData,
-    },
-  };
+  const onContinue = (formData: OrderDetailsData) => {
+    if (!restaurant) return;
 
-  try {
-    const { url } = await createCheckoutSession(payload);
+    if (!formData.orderType) return;
 
-    // 🌐 WEB
-    if (Platform.OS === "web") {
-      window.location.href = url;
+    if (
+      formData.orderType === "delivery" &&
+      !formData.addressLine1
+    ) {
       return;
     }
 
-    // 📱 MOBILE
-    if (await InAppBrowser.isAvailable()) {
-      await InAppBrowser.openAuth(
-        url,
-        "godiyaoni://CurrentOrderStatusScreen",
-        {
-          dismissButtonStyle: "cancel",
-          preferredBarTintColor: "#F97316",
-          preferredControlTintColor: "white",
-          showTitle: false,
-        }
-      );
-    }
-  } catch (err) {
-    Alert.alert("Payment Error", "Unable to proceed to payment");
-  }
-};
+    setShowCheckoutForm(false);
+
+    navigation.navigate("OrderReviewScreen", {
+      restaurant,
+      cartItems,
+      deliveryDetails: formData, 
+    });
+  };
+
   /* =====================
-     LOADING STATE
+     LOADING
   ====================== */
+
   if (isLoading || !restaurant) {
     return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <ActivityIndicator size="large" color="#F97316" />
-        <Text style={{ marginTop: 8 }}>Loading restaurant…</Text>
+      <View className="flex-1 items-center justify-center bg-gray-50">
+        <ActivityIndicator size="large" />
+        <Text className="mt-3 text-gray-600">
+          Loading restaurant…
+        </Text>
       </View>
     );
   }
 
+  const filteredMenu = restaurant.menuItem.filter((item) =>
+ item.name.toLowerCase().includes(menuSearch.toLowerCase())
+);
+
   /* =====================
      RENDER
   ====================== */
+
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: "#F9FAFB" }}>
+    <ScrollView className="flex-1 bg-gray-50">
+      <SearchBar
+  placeholder="Search menu items..."
+  searchQuery={menuSearch}
+  onSubmit={(data) => setMenuSearch(data.searchQuery)}
+  onChangeText={(text) => setMenuSearch(text)}
+/>
       <Image
         source={{ uri: restaurant.imageUrl }}
-        style={{
-          width: "100%",
-          height: 220,
-          borderBottomLeftRadius: 24,
-          borderBottomRightRadius: 24,
-        }}
+        className="w-full h-56 rounded-b-3xl"
       />
 
-      <View style={{ padding: 16 }}>
+      <View className="p-4">
         <RestaurantInfo restaurant={restaurant} />
 
-        <Text style={{ fontSize: 22, fontWeight: "700", marginVertical: 16 }}>
+        <Text className="text-2xl font-bold my-4 text-gray-800">
           Menu
         </Text>
 
-        {restaurant.menuItem.map((item) => (
-          <MenuItem
-            key={item.id}
-            menuItem={item}
-            addToCart={() =>
-              addToCart({
-                id: item.id,
-                name: item.name,
-                price: item.price,
-              })
-            }
-          />
-        ))}
+        {filteredMenu.length === 0 ? (
+  <Text className="text-center text-gray-500 mt-4">
+    No menu items found.
+  </Text>
+) : (
+  filteredMenu.map((item) => (
+    <MenuItem
+      key={item.id}
+      menuItem={item}
+      addToCart={() =>
+        addToCart({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          imageUrl: item.imageUrl,
+        })
+      }
+    />
+  ))
+)}
 
         <OrderSummary
           restaurant={restaurant}
@@ -195,64 +218,44 @@ const DetailScreen = () => {
           removeFromCart={removeFromCart}
         />
 
-        {/* CHECKOUT BUTTON */}
         <TouchableOpacity
           disabled={cartItems.length === 0}
           onPress={() => setShowCheckoutForm(true)}
-          style={{
-            marginTop: 20,
-            padding: 16,
-            borderRadius: 12,
-            backgroundColor:
-              cartItems.length === 0 ? "#D1D5DB" : "#F97316",
-          }}
+          className={`mt-6 p-4 rounded-xl ${
+            cartItems.length === 0
+              ? "bg-gray-300"
+              : "bg-orange-500"
+          }`}
         >
-          <Text
-            style={{
-              color: "white",
-              textAlign: "center",
-              fontSize: 18,
-              fontWeight: "600",
-            }}
-          >
-            Proceed to Checkout
+          <Text className="text-white text-center text-lg font-semibold">
+            Continue
           </Text>
         </TouchableOpacity>
       </View>
 
-      {/* =====================
-          CHECKOUT FORM MODAL
-      ====================== */}
       <Modal
         visible={showCheckoutForm}
         animationType="slide"
         presentationStyle="pageSheet"
-        onRequestClose={() => setShowCheckoutForm(false)}
+        onRequestClose={() =>
+          setShowCheckoutForm(false)
+        }
       >
-        <ScrollView style={{ flex: 1, padding: 16 }}>
-          <UserProfileForm
-            currentUser={{
-              name: "",
-              phone: "",
-              addressLine1: "",
-              city: "",
-              country: "",
-              email: "",
-            }}
-            isLoading={isCheckoutLoading}
-            title="Confirm Delivery Details"
-            buttonText="Proceed To Payment"
-            onSave={(data) => {
-              setShowCheckoutForm(false);
-              onCheckout(data);
-            }}
+        <ScrollView className="flex-1 bg-white p-4">
+          <OrderDetailsForm
+            title="Delivery Details"
+            buttonText="Review Order"
+            isLoading={false}
+            onSave={onContinue}
           />
 
           <TouchableOpacity
-            onPress={() => setShowCheckoutForm(false)}
-            style={{ marginTop: 20 }}
+            onPress={() =>
+              setShowCheckoutForm(false)
+            }
+            className="mt-6"
           >
-            <Text style={{ textAlign: "center", color: "#EF4444" }}>
+            <Text className="text-center text-red-500">
               Cancel
             </Text>
           </TouchableOpacity>

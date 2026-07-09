@@ -3,8 +3,8 @@ import { Button } from "./ui/button";
 import LoadingButton from "../components/LoadingButton";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { useGetMyUser } from "../Api/MyUserApi";
-import UserProfileForm from "../forms/user-profile-form/UserProfileForm";
 import type { UserFormData } from "../forms/user-profile-form/UserProfileForm";
+import OrderDetailsForm from "@/forms/order-details-form/OrderDetailsForm";
 
 type Props = {
   onCheckout: (userFormData: UserFormData) => void;
@@ -29,7 +29,7 @@ const CheckoutButton = ({ onCheckout, disabled, isLoading }: Props) => {
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[425px] md:min-w-[700px] bg-gray-50">
-        <UserProfileForm
+        <OrderDetailsForm
           currentUser={currentUser}
           onSave={onCheckout}
           isLoading={isGetUserLoading}

@@ -17,6 +17,7 @@ type Props = {
   placeholder: string;
   onReset?: () => void;
   searchQuery: string;
+   onChangeText?: (text: string) => void;
 };
 
 const SearchBar = ({ onSubmit, onReset, placeholder, searchQuery }: Props) => {
@@ -48,7 +49,7 @@ const SearchBar = ({ onSubmit, onReset, placeholder, searchQuery }: Props) => {
             value={value}
             onChangeText={onChange}
             placeholder={placeholder}
-            className="flex-1 text-base text-gray-800"
+            className="flex-1 text-base text-center text-gray-800"
             placeholderTextColor="#9ca3af"
           />
         )}

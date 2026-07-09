@@ -1,8 +1,7 @@
-// src/Auth/FirebaseProvider.tsx
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, User as FirebaseUser } from "firebase/auth";
-import { View, Text, ActivityIndicator } from "react-native";
-import { auth } from "../config/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "../config/firebase";
 
 export type Role = "admin" | "user";
 
@@ -11,7 +10,6 @@ type AuthContextType = {
   role: Role | null;
   loading: boolean;
   isAuthenticated: boolean;
-  logginWithRedirect: (returnTo?: string) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,7 +20,7 @@ const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    const unsub = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
 
       if (!currentUser) {
@@ -32,32 +30,29 @@ const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       try {
-        // 🔴 force refresh so claims are always correct
-        const tokenResult = await currentUser.getIdTokenResult(true);
-        setRole(tokenResult.claims.admin ? "admin" : "user");
+        // 🔥 1️⃣ CHECK ADMIN COLLECTION FIRST
+        const adminSnap = await getDoc(
+          doc(db, "admin", currentUser.uid)
+        );
+
+        if (adminSnap.exists()) {
+          setRole("admin");
+          setLoading(false);
+          return;
+        }
+
+        // 🔹 2️⃣ OTHERWISE USER
+        setRole("user");
       } catch (err) {
-        console.error("Failed to read auth claims", err);
+        console.error("Failed to determine role", err);
         setRole("user");
       }
 
       setLoading(false);
     });
 
-    return unsubscribe;
+    return unsub;
   }, []);
-
-  const logginWithRedirect = () => {
-    // handled by navigator
-  };
-
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-        <Text style={{ marginTop: 12 }}>Checking authentication...</Text>
-      </View>
-    );
-  }
 
   return (
     <AuthContext.Provider
@@ -66,7 +61,6 @@ const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {
         role,
         loading,
         isAuthenticated: !!user,
-        logginWithRedirect,
       }}
     >
       {children}

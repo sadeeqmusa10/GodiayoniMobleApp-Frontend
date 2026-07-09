@@ -1,34 +1,19 @@
-import { useEffect } from "react";
-import { View, ActivityIndicator } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React from "react";
+import { View, Text } from "react-native";
 import { useAuth } from "./FirebaseProviderWithNavigate";
-import { RootStackParamList } from "../types";
 
-type Props = {
-  children: React.ReactNode;
-};
+const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+  const { role, loading } = useAuth();
 
-const AdminRoute = ({ children }: Props) => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { role, loading, isAuthenticated } = useAuth();
+  if (loading) return null;
 
-  useEffect(() => {
-    if (!loading && (!isAuthenticated || role !== "admin")) {
-      navigation.replace("HomeScreen"); // ✅ FIXED
-    }
-  }, [loading, role, isAuthenticated]);
-
-  if (loading) {
+  if (role !== "admin") {
     return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <ActivityIndicator size="large" />
+      <View className="flex-1 justify-center items-center">
+        <Text>Unauthorized</Text>
       </View>
     );
   }
-
-  if (role !== "admin") return null;
 
   return <>{children}</>;
 };

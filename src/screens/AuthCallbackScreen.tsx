@@ -22,7 +22,7 @@ const AuthCallbackScreen = () => {
         if (!user || hasCreatedUser.current) return;
 
         try {
-          const userDocRef = doc(db, "users", user.uid);
+          const userDocRef = doc(db!, "users", user.uid);
           const userSnapshot = await getDoc(userDocRef);
 
           if (!userSnapshot.exists()) {
@@ -38,7 +38,6 @@ const AuthCallbackScreen = () => {
           }
 
           hasCreatedUser.current = true;
-          navigation.replace("Home"); // navigate to your main screen
         } catch (error) {
           console.error("Error saving user to Firestore:", error);
         }

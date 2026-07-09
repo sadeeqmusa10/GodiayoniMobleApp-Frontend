@@ -1,22 +1,35 @@
-import { Timestamp } from "firebase/firestore";
+import type { Timestamp } from "firebase/firestore";
+import { CartItem } from "./screens/DetailScreen";
+import { OrderDetailsData } from "./forms/order-details-form/OrderDetailsForm";
 
 export type RootStackParamList = {
   LoginScreen: undefined;
   HomeScreen: undefined;
 
-  SearchScreen: { city?: string } | undefined;
+  SearchScreen?: { city: string };
   UserProfileScreen: undefined;
 
   DeliveryScreen: undefined;
+  DoorToDoorDeliveryScreen: undefined;
+  MotorParkDeliveryScreen: undefined;
+  WayBillDeliveryScreen : undefined;
+  CargoScreen: undefined;
+  CourrierServiceScreen: undefined;
+  ShippingClearingandForwardingScreen: undefined
+  
   DeliveryOrderScreen: { deliveryId: string };
 
   DeliveryStatusScreen: undefined;
-  OrderStatusScreen: {
-  orderId: string;
+  OrderStatusScreen: undefined;
+
+OrderReviewScreen: {
+  restaurant: Restaurant;
+  cartItems: CartItem[];
+  deliveryDetails: OrderDetailsData;
 };
 
   CurrentOrderStatusScreen: {
-  orderId: string;
+  orderId?: string;
 };
 
 
@@ -40,7 +53,11 @@ export type User = {
   email: string;
   role: UserRole;
   phone?: string;
-  addressLine1?: string;
+  addressLine1?: {
+      lat: number;
+      lng: number;
+     text:string;
+    };
   city?: string;
   country?: string;
 }
@@ -50,6 +67,7 @@ export type MenuItem = {
   id: string;
   name: string;
   price: number;
+  restaurantId: string;
 };
 
 export type Restaurant = {
@@ -58,6 +76,11 @@ export type Restaurant = {
   User: string;
   restaurantName: string;
   restaurantNameLower: string;
+  address: {
+      lat: number;
+      lng: number;
+     text:string;
+    };
   city: string;
   country: string;
   deliveryPrice: number;
@@ -85,27 +108,50 @@ export type OrderStatus =
   | "outForDelivery"
   | "delivered";
 
+ export interface RestaurantSnapshot {
+  name: string;
+  imageUrl?: string;
+  addressText?: string;
+  lat?: number;
+  lng?: number;
+}
+
+
 export type Order = {
   id: string;
   firebaseId: string;
-  restaurant: Restaurant;
+  restaurantSnapshot: RestaurantSnapshot;
   user: User;
   cartItems: {
     menuItemId: string;
     name: string;
     quantity: string;
+    imageUrl:string;
   }[];
   deliveryDetails: {
     name: string;
-    addressLine1: string;
+    addressLine1: {
+      lat: number;
+      lng: number;
+     text:string;
+    };
     city: string;
     email: string;
   };
+  deliveryTimeMinutes: number;
+   orderType: "delivery" | "takeaway" | "dining";
+  deliveryType?: "standard" | "express" | "same-day";
+  deliveryPrice: number;
   totalAmount: number;
   status: OrderStatus;
   createdAt: Timestamp | { _seconds: number; _nanoseconds: number };
   restaurantId: string;
 };
+
+export type DeliveryType =
+| "express"
+| "same-day"
+| "standard"
 
 export type DeliveryStatus =
   | "placed"
@@ -114,20 +160,29 @@ export type DeliveryStatus =
   | "outForDelivery"
   | "delivered";
 
-export interface Delivery {
+export interface PickUpDelivery {
   deliveryId: string;
-  firebaseId: string;
+  userId: string | null;
 
   sender: {
     name: string;
     phone: string;
-    pickupAddress: string;
+    address: {
+      lat: number;
+      lng: number;
+     text:string;
+    };
   };
 
   receiver: {
     name: string;
     phone: string;
-    dropoffAddress: string;
+    address: {
+      
+      lat: number;
+      lng: number;
+      text: string;
+    };
   };
 
   package: {
@@ -138,15 +193,179 @@ export interface Delivery {
 
   deliveryType: "standard" | "express" | "same-day";
   price: number;
+  distanceMeters: number;
   estimatedDeliveryTime: number;
 
-  status: DeliveryStatus;
-  paymentReference: string;
   imageUrl: string;
 
-  createdAt: Timestamp | { _seconds: number; _nanoseconds: number };
-  lastUpdated?: Timestamp | { _seconds: number; _nanoseconds: number };
+  status: DeliveryStatus;
+  paymentReference?: string;
+ createdAt: {
+    _seconds: number;
+    _nanoseconds: number;
+  };
+
+  lastUpdated?: {
+    _seconds: number;
+    _nanoseconds: number;
+  };
 }
+
+
+export interface DooToDoorDelivery {
+  deliveryId: string;
+  userId: string | null;
+
+  sender: {
+    name: string;
+    phone: string;
+    address: {
+      lat: number;
+      lng: number;
+     text:string;
+    };
+  };
+
+  receiver: {
+    name: string;
+    phone: string;
+    address: {
+      
+      lat: number;
+      lng: number;
+      text: string;
+    };
+  };
+
+  package: {
+    description: string;
+    weight: number;
+    value: number;
+  };
+
+  deliveryType: "standard" | "express" | "same-day";
+  price: number;
+  distanceMeters: number;
+  estimatedDeliveryTime: number;
+
+  imageUrl: string;
+
+  status: DeliveryStatus;
+  paymentReference?: string;
+ createdAt: {
+    _seconds: number;
+    _nanoseconds: number;
+  };
+
+  lastUpdated?: {
+    _seconds: number;
+    _nanoseconds: number;
+  };
+}
+
+
+export interface MotorParkDelivery {
+  deliveryId: string;
+  userId: string | null;
+
+  sender: {
+    name: string;
+    phone: string;
+    address: {
+      lat: number;
+      lng: number;
+     text:string;
+    };
+  };
+
+  receiver: {
+    name: string;
+    phone: string;
+    address: {
+      
+      lat: number;
+      lng: number;
+      text: string;
+    };
+  };
+
+  package: {
+    description: string;
+    weight: number;
+    value: number;
+  };
+
+  deliveryType: "standard" | "express" | "same-day";
+  price: number;
+  distanceMeters: number;
+  estimatedDeliveryTime: number;
+
+  imageUrl: string;
+
+  status: DeliveryStatus;
+  paymentReference?: string;
+ createdAt: {
+    _seconds: number;
+    _nanoseconds: number;
+  };
+
+  lastUpdated?: {
+    _seconds: number;
+    _nanoseconds: number;
+  };
+}
+
+export interface WayBillDelivery {
+  deliveryId: string;
+  userId: string | null;
+
+  sender: {
+    name: string;
+    phone: string;
+    address: {
+      lat: number;
+      lng: number;
+     text:string;
+    };
+  };
+
+  receiver: {
+    name: string;
+    phone: string;
+    address: {
+      
+      lat: number;
+      lng: number;
+      text: string;
+    };
+  };
+
+  package: {
+    description: string;
+    weight: number;
+    value: number;
+  };
+
+  deliveryType: "standard" | "express" | "same-day";
+  price: number;
+  distanceMeters: number;
+  estimatedDeliveryTime: number;
+
+  imageUrl: string;
+
+  status: DeliveryStatus;
+  paymentReference?: string;
+ createdAt: {
+    _seconds: number;
+    _nanoseconds: number;
+  };
+
+  lastUpdated?: {
+    _seconds: number;
+    _nanoseconds: number;
+  };
+}
+
 
 
 export default {}

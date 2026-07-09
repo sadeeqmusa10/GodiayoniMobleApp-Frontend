@@ -4,8 +4,7 @@ import Constants from "expo-constants";
 import { Restaurant, RestaurantSearchResponse } from "../types";
 import { SearchState } from "../screens/SearchScreen";
 import { useEffect } from "react";
-
-const API_BASE_URL = Constants.expoConfig?.extra?.API_BASE_URL;
+import { API_BASE_URL } from "@/config/apibase";
 
 /* =========================
    GET SINGLE RESTAURANT

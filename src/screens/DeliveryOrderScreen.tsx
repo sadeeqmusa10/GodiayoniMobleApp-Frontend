@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, ScrollView, Alert, Platform } from "react-native";
 import { useRoute, RouteProp } from "@react-navigation/native";
-import { useGetDeliveryOrder } from "@/Api/DeliveryApi";
-import { useCreateDeliverySession } from "@/Api/DeliveryApi";
+import { useGetDeliveryOrder } from "@/Api/LogisticsApi";
+import { useCreateDeliverySession } from "@/Api/LogisticsApi";
 import DeliveryCheckoutButton from "../components/DeliveryCheckoutButton";
 import DeliveryInfo from "../components/DeliveryInfo";
 import { RootStackParamList } from "../types";
@@ -28,7 +28,7 @@ const DeliveryOrderScreen = () => {
       if (!session?.url) throw new Error("No checkout URL returned");
 
       if (Platform.OS === "web") {
-        window.location.assign(session.url);
+        window.location.href = session.url
       } else {
         const { Linking } = await import("react-native");
         await Linking.openURL(session.url);
@@ -48,7 +48,8 @@ const DeliveryOrderScreen = () => {
   }
 
   // Prevent checkout if price invalid
-  const isPriceValid = delivery.price < 1000;
+  const isPriceValid = delivery.price > 0;
+
 
   return (
     <ScrollView className="flex-1 bg-gray-50 px-6 py-6">

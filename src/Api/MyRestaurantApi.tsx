@@ -1,10 +1,11 @@
+import { API_BASE_URL } from "@/config/apibase";
 import { Restaurant } from "../types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getAuth } from "firebase/auth";
 import { Alert } from "react-native";
 
 // ✅ Expo uses process.env.EXPO_PUBLIC_ for environment variables
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL as string;
+
 
 // 🔹 Helper to get Firebase token
 const getFirebaseToken = async (): Promise<string> => {

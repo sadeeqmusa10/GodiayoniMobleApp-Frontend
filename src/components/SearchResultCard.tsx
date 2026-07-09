@@ -52,7 +52,6 @@ const SearchResultCard = ({ restaurant }: Props) => {
           </View>
 
           <View className="flex flex-row items-center gap-1">
-            <MaterialIcons name="attach-money" size={18} color="#374151" />
             <Text>
               Delivery price ₦{restaurant.deliveryPrice.toFixed(2)}
             </Text>

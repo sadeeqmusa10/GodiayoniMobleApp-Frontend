@@ -91,8 +91,6 @@ export default function LoginScreen() {
         await signInWithEmailAndPassword(auth, email, password);
         toast("Logged in successfully!");
       }
-
-      navigation.replace("HomeScreen");
     } catch (error: any) {
       console.error("Auth error:", error?.code, error?.message);
 
@@ -261,7 +259,6 @@ export default function LoginScreen() {
                 onPress={() => navigation.navigate("HomeScreen")}
                 className="mt-6"
               >
-                <Text className="text-gray-500 text-center">← Back to Home</Text>
               </TouchableOpacity>
             </View>
           </View>

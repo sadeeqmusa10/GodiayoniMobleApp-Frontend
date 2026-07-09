@@ -1,3 +1,4 @@
+import "./global.css";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React from "react";
 import { View, ScrollView } from "react-native";
@@ -16,31 +17,24 @@ export default function Layout({
   children,
   showHero = false,
   showHeader = true,
-  showFooter = true,
 }: Props) {
   return (
     <SafeAreaView className="flex-1 bg-white">
-      {/* HEADER */}
       {showHeader && <Header />}
 
-      {/* HERO */}
-      {showHero && <Hero />}
-
-      {/* SCROLLABLE CONTENT */}
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{
-          paddingBottom: showFooter ? 100 : 24,
-        }}
-      >
-        <View className="flex-1 ">
-          {children}
-        </View>
-      </ScrollView>
-
-      {/* FOOTER */}
-      {showFooter && <Footer />}
+      {/* Content wrapper */}
+      <View className="flex-1">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{
+            flexGrow: 1,
+          }}
+        >
+          {showHero && <Hero />}
+          <View className="flex-1">{children}</View>
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }

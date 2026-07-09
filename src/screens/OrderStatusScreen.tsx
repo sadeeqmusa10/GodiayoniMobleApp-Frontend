@@ -1,19 +1,21 @@
 import React from "react";
-import { View, Text, Image, ScrollView } from "react-native";
+import { View, Text, Image, ScrollView, ActivityIndicator } from "react-native";
 import { useGetMyOrders } from "../Api/OrderApi";
 import OrderStatusDetail from "../components/OrderStatusDetail";
 import OrderStatusHeader from "../components/OrderStatusHeader";
 
-const OrderStatusPage = () => {
+const OrderStatusScreen = () => {
   const { orders, isPending } = useGetMyOrders();
 
-  if (isPending) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <Text className="text-lg">Loading...</Text>
-      </View>
-    );
-  }
+   if (isPending) {
+      return (
+        <View className="flex-1 items-center justify-center bg-gray-50">
+          <ActivityIndicator size="large" color="#f97316" />
+          <Text className="mt-4 text-gray-600">Loading...</Text>
+        </View>
+      );
+    }
+  
 
   if (!orders || orders.length === 0) {
     return (
@@ -35,11 +37,15 @@ const OrderStatusPage = () => {
           <View className="mt-4 gap-6">
             <OrderStatusDetail order={order} />
 
+            <Text className="font-semibold">
+              Delivery Price: ₦{order.deliveryPrice}
+            </Text>
+
             <View className="w-full h-48 rounded-lg overflow-hidden">
               <Image
                 source={{
                   uri:
-                    order.restaurant?.imageUrl ||
+                    order.restaurantSnapshot?.imageUrl ||
                     "https://via.placeholder.com/400x200.png",
                 }}
                 className="w-full h-full"
@@ -53,4 +59,4 @@ const OrderStatusPage = () => {
   );
 };
 
-export default OrderStatusPage;
+export default OrderStatusScreen;

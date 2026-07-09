@@ -1,5 +1,4 @@
 // screens/DeliveryStatusScreen.tsx
-import React from "react";
 import { View, Text, ScrollView, ActivityIndicator } from "react-native";
 import { useGetMyDeliveries } from "../Api/DeliveryOrderApi";
 import DeliveryInfo from "../components/DeliveryInfo";

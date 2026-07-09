@@ -6,8 +6,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
 import Constants from "expo-constants";
 import React from "react";
-
-const API_BASE_URL = Constants.expoConfig?.extra?.API_BASE_URL;
+import { API_BASE_URL } from "@/config/apibase";
 
 interface CreateUserRequest {
   firebaseId: string;

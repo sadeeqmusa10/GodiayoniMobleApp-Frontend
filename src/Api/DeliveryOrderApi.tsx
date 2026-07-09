@@ -2,9 +2,7 @@
 import { Delivery } from "@/types";
 import { getAuth } from "firebase/auth";
 import { useQuery } from "@tanstack/react-query";
-import Constants from "expo-constants";
-
-const API_BASE_URL = Constants.expoConfig?.extra?.API_BASE_URL;
+import { API_BASE_URL } from "@/config/apibase";
 
 export const useGetMyDeliveries = () => {
   const auth = getAuth();

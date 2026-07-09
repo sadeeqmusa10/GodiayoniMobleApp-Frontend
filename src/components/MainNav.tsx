@@ -1,8 +1,8 @@
 import { Text, Pressable, View } from "react-native";
 import { getAuth, signOut } from "firebase/auth";
 import { useAuth } from "../Auth/FirebaseProviderWithNavigate";
-import UsernameMenu from "../components/Usermenu";
 import { navigationRef } from "../config/navigationRef";
+import Usermenu from "./Usermenu";
 
 const MainNav = () => {
   const { user } = useAuth();
@@ -10,13 +10,15 @@ const MainNav = () => {
 
   const handleLogout = async () => {
     await signOut(auth);
-    navigationRef.navigate("Home");
+    navigationRef.navigate("HomeScreen");
   };
 
   return (
     <View className="flex flex-row space-x-3 items-center">
       {user ? (
-        <UsernameMenu />
+        <Usermenu onClose={function (): void {
+          throw new Error("Function not implemented.");
+        } } />
       ) : (
         <Pressable
           onPress={() =>  navigationRef.navigate("/login" as any)}

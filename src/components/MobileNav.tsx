@@ -1,23 +1,47 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Pressable, Modal } from "react-native";
+import { View, Text, Pressable, Modal, ActivityIndicator } from "react-native";
 import { Menu, CircleUserRound } from "lucide-react-native";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import type { User as FirebaseUser } from "firebase/auth";
+import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+
 import Usermenu from "./Usermenu";
+import AdminMenu from "./AdminMenu"; // 👈 create this
+
+type Role = "admin" | "user";
 
 const MobileNav = () => {
   const auth = getAuth();
   const navigation = useNavigation<any>();
 
-  const [user, setUser] = useState<FirebaseUser | null>(auth.currentUser);
+  const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<Role | null>(null);
+  const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+
+      if (!currentUser) {
+        setRole(null);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // 🔥 FORCE refresh to get latest claims
+        const tokenResult = await currentUser.getIdTokenResult(true);
+        const claimRole = tokenResult.claims.role === "admin" ? "admin" : "user";
+        setRole(claimRole);
+      } catch (err) {
+        console.error("Failed to load role", err);
+        setRole("user");
+      }
+
+      setLoading(false);
     });
+
     return unsubscribe;
   }, []);
 
@@ -29,15 +53,12 @@ const MobileNav = () => {
 
   return (
     <View>
-      {/* 🍔 HAMBURGER BUTTON */}
-      <Pressable
-        onPress={() => setIsModalVisible(true)}
-        className="p-2"
-      >
+      {/* 🍔 HAMBURGER */}
+      <Pressable onPress={() => setIsModalVisible(true)} className="p-2">
         <Menu size={28} color="black" />
       </Pressable>
 
-      {/* 📱 BOTTOM MENU MODAL */}
+      {/* 📱 MODAL */}
       <Modal
         visible={isModalVisible}
         transparent
@@ -50,9 +71,9 @@ const MobileNav = () => {
           onPress={() => setIsModalVisible(false)}
         />
 
-        {/* MENU CONTENT */}
+        {/* CONTENT */}
         <View className="bg-white p-5 pt-6 rounded-t-3xl">
-          {/* USER HEADER */}
+          {/* HEADER */}
           <View className="flex-row items-center gap-3 mb-4">
             {user ? (
               <>
@@ -70,9 +91,15 @@ const MobileNav = () => {
 
           <View className="h-[1px] bg-gray-300 mb-5" />
 
-          {/* MENU BODY */}
-          {user ? (
-            <Usermenu onClose={() => setIsModalVisible(false)} />
+          {/* BODY */}
+          {loading ? (
+            <ActivityIndicator size="large" />
+          ) : user ? (
+            role === "admin" ? (
+              <AdminMenu onClose={() => setIsModalVisible(false)} />
+            ) : (
+              <Usermenu onClose={() => setIsModalVisible(false)} />
+            )
           ) : (
             <Pressable
               onPress={handleLoginRedirect}
@@ -84,7 +111,7 @@ const MobileNav = () => {
             </Pressable>
           )}
 
-          {/* CLOSE BUTTON */}
+          {/* CLOSE */}
           <Pressable
             onPress={() => setIsModalVisible(false)}
             className="mt-6 py-3 rounded-lg bg-gray-200"
