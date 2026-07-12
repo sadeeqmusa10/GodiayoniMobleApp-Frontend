@@ -1,50 +1,420 @@
-# Welcome to your Expo app 👋
+<h1 align="center">Hi 👋, I'm Abubakar Musa</h1>
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+<h3 align="center">
+Full-Stack & Mobile App Developer from Nigeria 🇳🇬
+</h3>
 
-## Get started
+<p align="center">
+I build modern web and mobile applications using React Native, Node.js, Express, TypeScript, and Firebase.
+</p>
 
-1. Install dependencies
+<p align="center">
+🟢 Open to Full-Stack Developer and Junior Software Engineer opportunities.
+</p>
 
-   ```bash
-   npm install
-   ```
+---
 
-2. Start the app
+## 👨‍💻 About Me
 
-   ```bash
-   npx expo start
-   ```
+I'm a Full-Stack & Mobile App Developer passionate about building scalable applications that solve real-world problems.
 
-In the output, you'll find options to open the app in a
+I enjoy working across both frontend and backend development, creating complete solutions from mobile user interfaces to secure REST APIs.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+Currently, I'm focused on improving my skills in:
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- 📱 React Native
+- ⚡ Node.js & Express
+- 🔥 Firebase & Cloud Firestore
+- 🛒 E-commerce & Delivery Systems
+- ☁️ Cloud-based Application Development
 
-## Get a fresh project
+---
 
-When you're ready, run:
+## 🚀 Tech Stack
+
+### Languages
+
+- TypeScript
+- JavaScript
+
+### Frontend
+
+- React Native
+- React
+- Tailwind CSS
+
+### Backend
+
+- Node.js
+- Express.js
+- REST APIs
+
+### Database & Cloud
+
+- Firebase Authentication
+- Cloud Firestore
+- Cloudinary
+
+### Tools
+
+- Git
+- GitHub
+- VS Code
+
+---
+
+## 🌟 Featured Projects
+
+### 📱 Godiyaoni Express Delivery Mobile App
+
+A React Native application for food ordering and logistics.
+
+**Features**
+
+- Firebase Authentication
+- Restaurant Management
+- Shopping Cart
+- Order Tracking
+- Paystack Integration
+- Google Places Autocomplete
+- Multiple Delivery Services
+
+🔗 Frontend Repository
+
+https://github.com/sadeeqmusa10/GodiayoniMobleApp-Frontend
+
+---
+
+### ⚙️ Godiyaoni Express Delivery Backend
+
+Production-ready REST API built with Express and TypeScript.
+
+**Features**
+
+- Firebase Authentication
+- Role-Based Access Control
+- Restaurant Management
+- Order Management
+- Delivery Management
+- Cloudinary Image Uploads
+- Paystack Integration
+
+🔗 Backend Repository
+
+https://github.com/sadeeqmusa10/GodiyaoniMobileApp-Backend
+
+---
+
+## 📚 Currently Learning
+
+- Software Architecture
+- API Design
+- System Design
+- Performance Optimization
+- Clean Code Principles
+
+---
+
+## 📫 Contact Me
+
+📧 Email
+
+**sadeeqmusa10@gmail.com**
+
+💼 LinkedIn
+
+www.linkedin.com/in/abubakar-musa-48b994225
+
+---
+
+## 🎯 Career Goal
+
+I'm actively seeking opportunities where I can contribute to building high-quality software, continue learning from experienced engineers, and grow as a Full-Stack Software Developer.
+
+I'm open to:
+
+- Full-Stack Developer
+- Junior Software Engineer
+- React Native Developer
+
+Remote, hybrid, and on-site opportunities are all welcome.
+
+---
+
+⭐ Thanks for visiting my profile!
+
+<p align="center">
+  <img src="docs/images/banner.png" width="100%" alt="Godiyaoni Express Delivery Banner">
+</p>
+
+# 📱 Godiyaoni Express Delivery Mobile App
+
+A modern React Native food ordering and logistics mobile application that connects customers, restaurants, and administrators on a single platform.
+
+The application enables customers to order food, request logistics services, track deliveries, make secure payments, and manage their accounts through an intuitive mobile experience.
+
+---
+
+## 🔗 Related Repository
+
+**Backend API**
+
+https://github.com/sadeeqmusa10/GodiyaoniMobileApp-Backend
+
+---
+
+# ✨ Features
+
+## 👤 Customer
+
+- Firebase Authentication
+- User Registration & Login
+- User Profile Management
+- Address Autocomplete
+- Search Restaurants
+- Browse Menus
+- Shopping Cart
+- Secure Checkout
+- Order History
+- Order Tracking
+- Reviews & Ratings
+
+---
+
+## 🍽 Restaurant
+
+- Restaurant Dashboard
+- Restaurant Profile Management
+- Menu Management
+- Image Upload
+- Order Management
+
+---
+
+## 👨‍💼 Administrator
+
+- Admin Dashboard
+- Restaurant Management
+- Order Management
+- Delivery Management
+
+---
+
+## 🚚 Logistics
+
+Supports multiple delivery services:
+
+- Door-to-Door Delivery
+- Pickup Delivery
+- Motor Park Delivery
+- Waybill Delivery
+
+---
+
+## 💳 Payments
+
+- Paystack Integration
+- Secure Payment Processing
+
+---
+
+## 📍 Maps & Location
+
+- Google Places Autocomplete
+- Address Validation
+- Distance Calculation
+- Delivery Price Calculation
+
+---
+
+# 🛠 Technology Stack
+
+| Category | Technology |
+|----------|------------|
+| Framework | React Native |
+| Language | TypeScript |
+| Navigation | React Navigation |
+| Authentication | Firebase Authentication |
+| Database | Cloud Firestore |
+| Storage | Cloudinary |
+| State Management | React Query |
+| Styling | NativeWind + Tailwind CSS |
+| Forms | React Hook Form |
+| Validation | Zod |
+| Payments | Paystack |
+| Maps | Google Places API |
+
+---
+
+# 🏗 System Architecture
+
+<p align="center">
+    <img src="docs/images/architecture.png" width="100%">
+</p>
+
+---
+
+# 📱 Application Screens
+
+## 🔐 Authentication
+
+- Login
+- Register
+- Forgot Password
+
+---
+
+## 👤 Customer
+
+- Home
+- Restaurant Details
+- Menu
+- Shopping Cart
+- Checkout
+- Orders
+- Order Details
+- Profile
+
+---
+
+## 🍽 Restaurant Dashboard
+
+- Dashboard
+- Manage Restaurant
+- Menu Management
+- Incoming Orders
+
+---
+
+## 👨‍💼 Admin Dashboard
+
+- Dashboard
+- Restaurants
+- Orders
+- Deliveries
+
+---
+
+# 🚀 Getting Started
+
+## Clone Repository
 
 ```bash
-npm run reset-project
+git clone https://github.com/sadeeqmusa10/GodiayoniMobleApp-Frontend.git
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## Install Dependencies
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+npm install
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+---
 
-## Join the community
+## Configure Environment Variables
 
-Join our community of developers creating universal apps.
+Create a `.env` file.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Example:
+
+```env
+API_BASE_URL=
+GOOGLE_PLACES_API_KEY=
+FIREBASE_API_KEY=
+FIREBASE_PROJECT_ID=
+```
+
+---
+
+## Start Development
+
+```bash
+npm start
+```
+
+or
+
+```bash
+npx expo start
+```
+
+---
+
+# 📂 Project Structure
+
+```text
+src/
+├── api/
+├── assets/
+├── components/
+├── config/
+├── contexts/
+├── forms/
+├── hooks/
+├── navigation/
+├── screens/
+├── types/
+
+docs/
+├── images/
+
+App.tsx
+```
+
+---
+
+# 📸 Screenshots
+
+> Screenshots are available in the **docs/images** folder.
+
+---
+
+# 🔒 Security
+
+- Firebase Authentication
+- Protected Routes
+- Secure API Communication
+- Role-Based Access Control
+
+---
+
+# 🚀 Deployment
+
+| Service | Platform |
+|----------|----------|
+| Mobile App | Expo |
+| Backend API | Render |
+| Database | Cloud Firestore |
+| Authentication | Firebase Authentication |
+
+---
+
+# 📈 Future Improvements
+
+- Push Notifications
+- Offline Support
+- Dark Mode
+- Multi-language Support
+- Apple Pay
+- Google Pay
+- Real-time Driver Tracking
+
+---
+
+# 👨‍💻 Author
+
+**Abubakar Musa**
+
+Software Engineer
+
+LinkedIn:
+
+https://www.linkedin.com/in/abubakar-musa-48b994225
+
+---
+
+# 📄 License
+
+This project is licensed under the MIT License.
